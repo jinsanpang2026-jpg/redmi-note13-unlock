@@ -688,7 +688,7 @@ artifacts/
 
 1. **刷 GSI** —— 这台机器**出厂就是 seamless GSI 架构**，详见下节 §14。
 2. **要 GMS** —— HyperOS 内部「谷歌基础服务」开关，成本最低，无需刷机；或在 DSU 里装 GMS 版 GSI。
-3. **GitHub 建仓** —— 需要 token 或浏览器登录才能 `gh repo create`，用户已说「先放弃」。
+3. **GitHub 建仓** —— ✅ 已完成（2026-10-21）：`https://github.com/jinsanpang2026-jpg/redmi-note13-unlock`（公开仓库）。发布前已将本机序列号脱敏为 `SERIAL_REDACTED`（22 处 / 17 个文件），并重建 git 历史，原始对象未上传。
 
 ---
 
