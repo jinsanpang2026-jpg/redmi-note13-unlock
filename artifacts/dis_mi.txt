@@ -1,0 +1,535 @@
+
+######## 0x5cb00 - 0x5d000 ########
+0x05cb00: cmp      r0, #0                      
+0x05cb02: bne      #0x5cabc                    
+0x05cb04: ldr      r4, [pc, #0x50]                ; pool 0x0cd5a2
+0x05cb06: add      r4, pc                      
+0x05cb08: mov      r0, r4                      
+0x05cb0a: bl       #0x60d04                    
+0x05cb0e: cbnz     r0, #0x5cb1a                
+0x05cb10: mov      r0, r4                      
+0x05cb12: bl       #0x62a10                    
+0x05cb16: cmp      r0, #0                      
+0x05cb18: bne      #0x5cabc                    
+0x05cb1a: ldr      r0, [pc, #0x40]                ; pool 0x0cd556
+0x05cb1c: ldr      r1, [pc, #0x40]                ; -> 0x12a0b4 'pass'
+0x05cb1e: add      r0, pc                      
+0x05cb20: add      r1, pc                      
+0x05cb22: bl       #0x61220                    
+0x05cb26: cbnz     r0, #0x5cb2a                
+0x05cb28: pop      {r4, pc}                    
+0x05cb2a: ldr      r0, [pc, #0x38]                ; -> 0x12a088 'set_env fail'
+0x05cb2c: add      r0, pc                      
+0x05cb2e: bl       #0x432cc                    
+0x05cb32: mov.w    r0, #-1                     
+0x05cb36: pop      {r4, pc}                    
+0x05cb38: bpl      #0x5cad8                    
+0x05cb3a: movs     r4, r1                      
+0x05cb3c: ldr      r4, [r2, #0x60]             
+0x05cb3e: movs     r2, r0                      
+0x05cb40: asrs     r0, r2, #0x1f               
+0x05cb42: movs     r3, r0                      
+0x05cb44: bpl      #0x5cb3c                    
+0x05cb46: movs     r4, r1                      
+0x05cb48: bpl      #0x5caa4                    
+0x05cb4a: movs     r4, r1                      
+0x05cb4c: movs     r0, #0xfe                   
+0x05cb4e: movs     r4, r1                      
+0x05cb50: bpl      #0x5cac8                    
+0x05cb52: movs     r4, r1                      
+0x05cb54: bpl      #0x5cab8                    
+0x05cb56: movs     r4, r1                      
+0x05cb58: bpl      #0x5caa0                    
+0x05cb5a: movs     r4, r1                      
+0x05cb5c: bpl      #0x5cc0c                    
+0x05cb5e: movs     r4, r1                      
+0x05cb60: bpl      #0x5ca84                    
+0x05cb62: movs     r4, r1                      
+0x05cb64: bpl      #0x5cc18                    
+0x05cb66: movs     r4, r1                      
+0x05cb68: push.w   {r4, r5, r6, r8, sb, lr}    
+0x05cb6c: mov      r6, r0                      
+0x05cb6e: bl       #0x6f818                    
+0x05cb72: ldr      r4, [pc, #0x90]                ; pool 0x10cb70
+0x05cb74: add      r4, pc                      
+0x05cb76: cbz      r0, #0x5cb92                
+0x05cb78: ldr      r3, [r0, #8]                
+0x05cb7a: cbz      r3, #0x5cb92                
+0x05cb7c: ldr      r2, [pc, #0x88]                ; pool 0x00023c
+0x05cb7e: ldrb     r3, [r3, #0xb]              
+0x05cb80: ldr      r5, [r4, r2]                
+0x05cb82: cmp      r3, #1                      
+0x05cb84: str      r3, [r5]                    
+0x05cb86: beq      #0x5cb9c                    
+0x05cb88: cmp      r3, #2                      
+0x05cb8a: beq      #0x5cba4                    
+0x05cb8c: movs     r0, #5                      
+0x05cb8e: pop.w    {r4, r5, r6, r8, sb, pc}    
+0x05cb92: ldr      r3, [pc, #0x74]                ; pool 0x00023c
+0x05cb94: ldr      r5, [r4, r3]                
+0x05cb96: ldr      r3, [r5]                    
+0x05cb98: cmp      r3, #1                      
+0x05cb9a: bne      #0x5cb88                    
+0x05cb9c: bl       #0x73608                    
+0x05cba0: ldr      r3, [r5]                    
+0x05cba2: b        #0x5cb88                    
+0x05cba4: bl       #0x5db30                    
+0x05cba8: cmp      r1, #0                      
+0x05cbaa: ittt     eq                          
+0x05cbac: cmpeq.w  r0, #0x1000000              
+0x05cbb0: movweq   r3, #0xffe0                 
+0x05cbb4: streq    r3, [r6]                    
+0x05cbb6: beq      #0x5cbe8                    
+0x05cbb8: cmp      r1, #0                      
+0x05cbba: it       eq                          
+0x05cbbc: cmpeq.w  r0, #0x400000               
+0x05cbc0: beq      #0x5cbd2                    
+0x05cbc2: mov      r1, r0                      
+0x05cbc4: ldr      r0, [pc, #0x44]                ; pool 0x0cd506
+0x05cbc6: add      r0, pc                      
+0x05cbc8: bl       #0x432cc                    
+0x05cbcc: movs     r0, #7                      
+0x05cbce: pop.w    {r4, r5, r6, r8, sb, pc}    
+0x05cbd2: ldr      r3, [pc, #0x3c]                ; pool 0x00051c
+0x05cbd4: movw     r2, #0x3fe0                 
+0x05cbd8: str      r2, [r6]                    
+0x05cbda: mov.w    r8, #1                      
+0x05cbde: mov.w    sb, #0                      
+0x05cbe2: ldr      r3, [r4, r3]                
+0x05cbe4: strd     r8, sb, [r3]                
+0x05cbe8: mov      r1, r0                      
+0x05cbea: ldr      r0, [pc, #0x28]                ; -> 0x12a0e8 'rpmb size : 0x%x'
+0x05cbec: add      r0, pc                      
+0x05cbee: bl       #0x432cc                    
+0x05cbf2: ldr      r0, [pc, #0x24]                ; pool 0x0cd502
+0x05cbf4: ldr      r1, [r6]                    
+0x05cbf6: add      r0, pc                      
+0x05cbf8: bl       #0x432cc                    
+0x05cbfc: movs     r0, #0                      
+0x05cbfe: pop.w    {r4, r5, r6, r8, sb, pc}    
+0x05cc02: nop                                  
+0x05cc04: ldm      r3!, {r4, r5, r6}           
+0x05cc06: movs     r0, r2                      
+0x05cc08: lsls     r4, r7, #8                  
+0x05cc0a: movs     r0, r0                      
+0x05cc0c: bpl      #0x5cc1c                    
+0x05cc0e: movs     r4, r1                      
+0x05cc10: lsls     r4, r3, #0x14               
+0x05cc12: movs     r0, r0                      
+0x05cc14: bmi      #0x5cc08                    
+0x05cc16: movs     r4, r1                      
+0x05cc18: bpl      #0x5cc20                    
+0x05cc1a: movs     r4, r1                      
+0x05cc1c: push     {r4, r5, lr}                
+0x05cc1e: sub      sp, #0x14                   
+0x05cc20: ldr      r5, [pc, #0x6c]                ; -> 0x12a024 'mi_check_magic'
+0x05cc22: ldr      r0, [pc, #0x70]                ; pool 0x0cd4e6
+0x05cc24: add      r5, pc                      
+0x05cc26: add      r0, pc                      
+0x05cc28: mov      r1, r5                      
+0x05cc2a: bl       #0x432cc                    
+0x05cc2e: add      r0, sp, #0x10               
+0x05cc30: movs     r3, #0                      
+0x05cc32: str      r3, [sp, #4]                
+0x05cc34: str      r3, [r0, #-0x10]!           
+0x05cc38: str      r3, [sp, #8]                
+0x05cc3a: strb.w   r3, [sp, #0xc]              
+0x05cc3e: bl       #0x5cb68                    
+0x05cc42: cbz      r0, #0x5cc5a                
+0x05cc44: mov      r4, r0                      
+0x05cc46: ldr      r1, [pc, #0x50]                ; -> 0x12a024 'mi_check_magic'
+0x05cc48: ldr      r0, [pc, #0x50]                ; pool 0x0cd50a
+0x05cc4a: mov      r2, r4                      
+0x05cc4c: add      r1, pc                      
+0x05cc4e: add      r0, pc                      
+0x05cc50: bl       #0x432cc                    
+0x05cc54: mov      r0, r4                      
+0x05cc56: add      sp, #0x14                   
+0x05cc58: pop      {r4, r5, pc}                
+0x05cc5a: add      r4, sp, #4                  
+0x05cc5c: ldr      r0, [sp]                    
+0x05cc5e: movs     r2, #8                      
+0x05cc60: mov      r1, r4                      
+0x05cc62: bl       #0x5c908                    
+0x05cc66: cmp      r0, #0                      
+0x05cc68: bne      #0x5cc44                    
+0x05cc6a: ldr      r1, [pc, #0x34]                ; -> 0x12a150 'Jz8PNRUF'
+0x05cc6c: mov      r0, r4                      
+0x05cc6e: movs     r2, #8                      
+0x05cc70: add      r1, pc                      
+0x05cc72: bl       #0x44444                    
+0x05cc76: mov      r4, r0                      
+0x05cc78: cmp      r0, #0                      
+0x05cc7a: beq      #0x5cc54                    
+0x05cc7c: ldr      r0, [pc, #0x24]                ; pool 0x0cd4a2
+0x05cc7e: mov      r1, r5                      
+0x05cc80: movs     r4, #3                      
+0x05cc82: add      r0, pc                      
+0x05cc84: bl       #0x432cc                    
+0x05cc88: mov      r0, r4                      
+0x05cc8a: add      sp, #0x14                   
+0x05cc8c: pop      {r4, r5, pc}                
+0x05cc8e: nop                                  
+0x05cc90: blo      #0x5cc8c                    
+0x05cc92: movs     r4, r1                      
+0x05cc94: bmi      #0x5cc64                    
+0x05cc96: movs     r4, r1                      
+0x05cc98: blo      #0x5cc44                    
+0x05cc9a: movs     r4, r1                      
+0x05cc9c: bpl      #0x5ccb4                    
+0x05cc9e: movs     r4, r1                      
+0x05cca0: bmi      #0x5cc5c                    
+0x05cca2: movs     r4, r1                      
+0x05cca4: bmi      #0x5cbec                    
+0x05cca6: movs     r4, r1                      
+0x05cca8: subs     r3, r0, #3                  
+0x05ccaa: cmp      r3, #1                      
+0x05ccac: push     {r4, r5, r6, r7, lr}        
+0x05ccae: sub      sp, #0x1c                   
+0x05ccb0: bls      #0x5ccc6                    
+0x05ccb2: mov      r2, r0                      
+0x05ccb4: ldr      r1, [pc, #0xa8]                ; -> 0x12a010 'mi_set_lock_state'
+0x05ccb6: ldr      r0, [pc, #0xac]                ; pool 0x0cd4b6
+0x05ccb8: add      r1, pc                      
+0x05ccba: add      r0, pc                      
+0x05ccbc: bl       #0x432cc                    
+0x05ccc0: movs     r0, #4                      
+0x05ccc2: add      sp, #0x1c                   
+0x05ccc4: pop      {r4, r5, r6, r7, pc}        
+0x05ccc6: bl       #0x2a354                    
+0x05ccca: movs     r3, #0                      
+0x05cccc: ldr      r1, [r0, #4]                
+0x05ccce: ldr      r5, [r0]                    
+0x05ccd0: movs     r0, #1                      
+0x05ccd2: cmp.w    r1, #0x100                  
+0x05ccd6: str      r3, [sp, #4]                
+0x05ccd8: ite      ls                          
+0x05ccda: movls    r2, #0                      
+0x05ccdc: movhi    r2, #1                      
+0x05ccde: cmp      r5, r3                      
+0x05cce0: it       eq                          
+0x05cce2: orreq    r2, r2, #1                  
+0x05cce6: str      r1, [sp]                    
+0x05cce8: str      r3, [sp, #0x10]             
+0x05ccea: str      r3, [sp, #0x14]             
+0x05ccec: str      r3, [sp, #8]                
+0x05ccee: cmp      r2, #0                      
+0x05ccf0: bne      #0x5ccc2                    
+0x05ccf2: add      r0, sp, #0x18               
+0x05ccf4: str      r2, [r0, #-0xc]!            
+0x05ccf8: bl       #0x5cb68                    
+0x05ccfc: cbz      r0, #0x5cd48                
+0x05ccfe: add      r0, sp, #4                  
+0x05cd00: bl       #0x5cb68                    
+0x05cd04: cmp      r0, #0                      
+0x05cd06: bne      #0x5ccc2                    
+0x05cd08: ldm.w    sp, {r4, r6}                
+0x05cd0c: adds     r7, r6, #1                  
+0x05cd0e: cbz      r4, #0x5cd54                
+0x05cd10: ldrb     r3, [r5]                    
+0x05cd12: cmp      r3, #0xaa                   
+0x05cd14: bne      #0x5cd2e                    
+0x05cd16: mov      r3, r0                      
+0x05cd18: mov      r2, r5                      
+0x05cd1a: b        #0x5cd24                    
+0x05cd1c: ldrb     r1, [r2, #1]!               
+0x05cd20: cmp      r1, #0xaa                   
+0x05cd22: bne      #0x5cd2a                    
+0x05cd24: adds     r3, #1                      
+0x05cd26: cmp      r3, r4                      
+0x05cd28: bne      #0x5cd1c                    
+0x05cd2a: cmp      r3, r4                      
+0x05cd2c: beq      #0x5cd54                    
+0x05cd2e: mov      r0, r7                      
+0x05cd30: mov      r1, sp                      
+0x05cd32: movs     r2, #4                      
+0x05cd34: bl       #0x5c9c8                    
+0x05cd38: cmp      r0, #0                      
+0x05cd3a: bne      #0x5ccc2                    
+0x05cd3c: adds     r0, r6, #2                  
+0x05cd3e: mov      r1, r5                      
+0x05cd40: ldr      r2, [sp]                    
+0x05cd42: bl       #0x5c9c8                    
+0x05cd46: b        #0x5ccc2                    
+0x05cd48: ldr      r0, [sp, #0xc]              
+0x05cd4a: add      r1, sp, #0x10               
+0x05cd4c: movs     r2, #8                      
+0x05cd4e: bl       #0x5c908                    
+0x05cd52: b        #0x5ccfe                    
+0x05cd54: mov      r0, r7                      
+0x05cd56: add      r1, sp, #8                  
+0x05cd58: movs     r2, #4                      
+0x05cd5a: bl       #0x5c9c8                    
+0x05cd5e: b        #0x5cd38                    
+0x05cd60: blo      #0x5ce0c                    
+0x05cd62: movs     r4, r1                      
+0x05cd64: bmi      #0x5ccd4                    
+0x05cd66: movs     r4, r1                      
+0x05cd68: push.w   {r4, r5, r6, r7, r8, sb, lr}
+0x05cd6c: sub.w    sp, sp, #0x214              
+0x05cd70: add      r7, sp, #0x10               
+0x05cd72: add      r5, sp, #4                  
+0x05cd74: movs     r1, #0                      
+0x05cd76: mov.w    r2, #0x100                  
+0x05cd7a: mov      r6, r0                      
+0x05cd7c: mov      r0, r7                      
+0x05cd7e: blx      #0x44380                    
+0x05cd82: movs     r4, #1                      
+0x05cd84: str      r4, [r5]                    
+0x05cd86: bl       #0x5cc1c                    
+0x05cd8a: cmp      r0, #6                      
+0x05cd8c: beq.w    #0x5cecc                    
+0x05cd90: cmp      r0, #3                      
+0x05cd92: beq      #0x5ce86                    
+0x05cd94: cmp      r0, #4                      
+0x05cd96: beq      #0x5cdca                    
+0x05cd98: add.w    sb, sp, #8                  
+0x05cd9c: add.w    r8, sp, #0x110              
+0x05cda0: movs     r3, #0                      
+0x05cda2: mov      r0, sb                      
+0x05cda4: str.w    r3, [sb]                    
+0x05cda8: str.w    r3, [r8]                    
+0x05cdac: bl       #0x5cb68                    
+0x05cdb0: cbz      r0, #0x5cdd6                
+0x05cdb2: mov      r1, r0                      
+0x05cdb4: ldr      r0, [pc, #0x148]               ; pool 0x0cd4ae
+0x05cdb6: add      r0, pc                      
+0x05cdb8: bl       #0x432cc                    
+0x05cdbc: movs     r0, #0                      
+0x05cdbe: movs     r3, #4                      
+0x05cdc0: str      r3, [r6]                    
+0x05cdc2: add.w    sp, sp, #0x214              
+0x05cdc6: pop.w    {r4, r5, r6, r7, r8, sb, pc}
+0x05cdca: str      r0, [r6]                    
+0x05cdcc: movs     r0, #0                      
+0x05cdce: add.w    sp, sp, #0x214              
+0x05cdd2: pop.w    {r4, r5, r6, r7, r8, sb, pc}
+0x05cdd6: ldr.w    r4, [sb]                    
+0x05cdda: mov      r1, r8                      
+0x05cddc: movs     r2, #4                      
+0x05cdde: adds     r0, r4, #1                  
+0x05cde0: bl       #0x5c908                    
+0x05cde4: ldr.w    r1, [r8]                    
+0x05cde8: cmp      r0, #0                      
+0x05cdea: bne      #0x5cec0                    
+0x05cdec: cmp.w    r1, #0x100                  
+0x05cdf0: bhi      #0x5cec0                    
+0x05cdf2: mov      r2, r1                      
+0x05cdf4: adds     r0, r4, #2                  
+0x05cdf6: mov      r1, r7                      
+0x05cdf8: bl       #0x5c908                    
+0x05cdfc: cmp      r0, #0                      
+0x05cdfe: bne      #0x5cdb2                    
+0x05ce00: ldr.w    r4, [r8]                    
+0x05ce04: cmp      r4, #0                      
+0x05ce06: beq      #0x5ce70                    
+0x05ce08: mov      r0, r7                      
+0x05ce0a: mov      r1, r4                      
+0x05ce0c: bl       #0x5d8d8                    
+0x05ce10: cmp      r0, #0                      
+0x05ce12: mov      r0, r5                      
+0x05ce14: ite      eq                          
+0x05ce16: moveq    r3, #3                      
+0x05ce18: movne    r3, #4                      
+0x05ce1a: str      r3, [r6]                    
+0x05ce1c: bl       #0x7a61c                    
+0x05ce20: cmp      r0, #0                      
+0x05ce22: bne      #0x5cee6                    
+0x05ce24: ldr      r3, [r5]                    
+0x05ce26: cmp      r3, #4                      
+0x05ce28: bne      #0x5cdcc                    
+0x05ce2a: ldr      r3, [r6]                    
+0x05ce2c: cmp      r3, #3                      
+0x05ce2e: bne      #0x5cdcc                    
+0x05ce30: mov.w    r2, #0x100                  
+0x05ce34: mov      r0, r8                      
+0x05ce36: movs     r1, #0                      
+0x05ce38: blx      #0x44380                    
+0x05ce3c: mov.w    r2, #-0x55555556            
+0x05ce40: mov      r3, r8                      
+0x05ce42: add      r1, sp, #0x210              
+0x05ce44: str      r2, [r3], #4                
+0x05ce48: cmp      r3, r1                      
+0x05ce4a: bne      #0x5ce42                    
+0x05ce4c: mov      r0, sb                      
+0x05ce4e: mov.w    r3, #0x100                  
+0x05ce52: str.w    r8, [sb]                    
+0x05ce56: str.w    r3, [sb, #4]                
+0x05ce5a: bl       #0x2a348                    
+0x05ce5e: ldr      r0, [r5]                    
+0x05ce60: bl       #0x5cca8                    
+0x05ce64: cmp      r0, #0                      
+0x05ce66: beq      #0x5cef6                    
+0x05ce68: movs     r3, #4                      
+0x05ce6a: movs     r0, #0                      
+0x05ce6c: str      r3, [r6]                    
+0x05ce6e: b        #0x5cdc2                    
+0x05ce70: ldr      r0, [pc, #0x90]                ; pool 0x0cd3ce
+0x05ce72: add      r0, pc                      
+0x05ce74: bl       #0x432cc                    
+0x05ce78: mov      r0, r4                      
+0x05ce7a: movs     r3, #4                      
+0x05ce7c: str      r3, [r6]                    
+0x05ce7e: add.w    sp, sp, #0x214              
+0x05ce82: pop.w    {r4, r5, r6, r7, r8, sb, pc}
+0x05ce86: str      r4, [r6]                    
+0x05ce88: mov      r0, r5                      
+0x05ce8a: bl       #0x7a61c                    
+0x05ce8e: mov      r4, r0                      
+0x05ce90: cbnz     r0, #0x5cee6                
+0x05ce92: ldr      r3, [r5]                    
+0x05ce94: cmp      r3, #3                      
+0x05ce96: beq      #0x5cdcc                    
+0x05ce98: ldr      r0, [pc, #0x6c]                ; pool 0x0cd352
+0x05ce9a: add      r5, sp, #0x110              
+0x05ce9c: ldr      r1, [pc, #0x6c]                ; -> 0x12a474 'mi_get_lock_state'
+0x05ce9e: add      r0, pc                      
+0x05cea0: add      r1, pc                      
+0x05cea2: bl       #0x432cc                    
+0x05cea6: mov      r0, r5                      
+0x05cea8: str      r4, [r5]                    
+0x05ceaa: bl       #0x5cb68                    
+0x05ceae: cmp      r0, #0                      
+0x05ceb0: bne      #0x5cdcc                    
+0x05ceb2: ldr      r1, [pc, #0x5c]                ; -> 0x12a150 'Jz8PNRUF'
+0x05ceb4: movs     r2, #8                      
+0x05ceb6: ldr      r0, [r5]                    
+0x05ceb8: add      r1, pc                      
+0x05ceba: bl       #0x5c9c8                    
+0x05cebe: b        #0x5cdcc                    
+0x05cec0: ldr      r0, [pc, #0x50]                ; pool 0x0cd356
+0x05cec2: add      r0, pc                      
+0x05cec4: bl       #0x432cc                    
+0x05cec8: movs     r1, #1                      
+0x05ceca: b        #0x5cdb4                    
+0x05cecc: mov      r0, r6                      
+0x05cece: bl       #0x7a61c                    
+0x05ced2: ldr      r1, [pc, #0x44]                ; pool 0x0cd59a
+0x05ced4: ldr      r2, [r6]                    
+0x05ced6: add      r1, pc                      
+0x05ced8: mov      r4, r0                      
+0x05ceda: ldr      r0, [pc, #0x40]                ; -> 0x12a19c '%s rpmb not provision! use seccfg replace, lock_stat'
+0x05cedc: add      r0, pc                      
+0x05cede: bl       #0x432cc                    
+0x05cee2: mov      r0, r4                      
+0x05cee4: b        #0x5cdc2                    
+0x05cee6: ldr      r0, [pc, #0x38]                ; pool 0x0cd2ee
+0x05cee8: ldr      r1, [pc, #0x38]                ; -> 0x12a474 'mi_get_lock_state'
+0x05ceea: add      r0, pc                      
+0x05ceec: add      r1, pc                      
+0x05ceee: bl       #0x432cc                    
+0x05cef2: movs     r0, #0                      
+0x05cef4: b        #0x5cdc2                    
+0x05cef6: ldr      r0, [pc, #0x30]                ; -> 0x12a254 'write sig success'
+0x05cef8: add      r0, pc                      
+0x05cefa: bl       #0x432cc                    
+0x05cefe: b        #0x5ce68                    
+0x05cf00: bmi      #0x5ce60                    
+0x05cf02: movs     r4, r1                      
+0x05cf04: blo      #0x5cea4                    
+0x05cf06: movs     r4, r1                      
+0x05cf08: blo      #0x5cfb0                    
+0x05cf0a: movs     r4, r1                      
+0x05cf0c: bpl      #0x5ceb0                    
+0x05cf0e: movs     r4, r1                      
+0x05cf10: bhs      #0x5ce3c                    
+0x05cf12: movs     r4, r1                      
+0x05cf14: blo      #0x5cfc4                    
+0x05cf16: movs     r4, r1                      
+0x05cf18: bpl      #0x5ce50                    
+0x05cf1a: movs     r4, r1                      
+0x05cf1c: bhs      #0x5ce98                    
+0x05cf1e: movs     r4, r1                      
+0x05cf20: bhs      #0x5cf00                    
+0x05cf22: movs     r4, r1                      
+0x05cf24: bpl      #0x5ce30                    
+0x05cf26: movs     r4, r1                      
+0x05cf28: blo      #0x5cfdc                    
+0x05cf2a: movs     r4, r1                      
+0x05cf2c: push     {r4, r5, lr}                
+0x05cf2e: movs     r5, #0x40                   
+0x05cf30: sub      sp, #0x44                   
+0x05cf32: movs     r1, #0                      
+0x05cf34: mov      r2, r5                      
+0x05cf36: mov      r0, sp                      
+0x05cf38: blx      #0x44380                    
+0x05cf3c: ldr      r2, [pc, #0x20]                ; pool 0x0cd33a
+0x05cf3e: mov      r1, r5                      
+0x05cf40: mov      r0, sp                      
+0x05cf42: add      r2, pc                      
+0x05cf44: bl       #0x44078                    
+0x05cf48: mov      r0, sp                      
+0x05cf4a: movs     r3, #0                      
+0x05cf4c: strb.w   r3, [sp, #0x3f]             
+0x05cf50: bl       #0x2f754                    
+0x05cf54: ldr      r0, [pc, #0xc]                 ; pool 0x0bebf2
+0x05cf56: add      r0, pc                      
+0x05cf58: bl       #0x2fa74                    
+0x05cf5c: add      sp, #0x44                   
+0x05cf5e: pop      {r4, r5, pc}                
+0x05cf60: blo      #0x5cfd8                    
+0x05cf62: movs     r4, r1                      
+0x05cf66: movs     r3, r1                      
+0x05cf68: ldr      r0, [pc, #4]                   ; pool 0x0cd326
+0x05cf6a: add      r0, pc                      
+0x05cf6c: b.w      #0x2f7d4                    
+0x05cf70: blo      #0x5cfc0                    
+0x05cf72: movs     r4, r1                      
+0x05cf74: push     {r4, r5, lr}                
+0x05cf76: sub      sp, #0x4c                   
+0x05cf78: add      r4, sp, #8                  
+0x05cf7a: movs     r1, #0                      
+0x05cf7c: movs     r2, #0x40                   
+0x05cf7e: mov      r0, r4                      
+0x05cf80: blx      #0x44380                    
+0x05cf84: add      r0, sp, #4                  
+0x05cf86: bl       #0x7b490                    
+0x05cf8a: mov      r5, r0                      
+0x05cf8c: cbnz     r0, #0x5cfb2                
+0x05cf8e: ldr      r2, [pc, #0x40]                ; pool 0x0cd332
+0x05cf90: movs     r1, #0x40                   
+0x05cf92: ldr      r3, [sp, #4]                
+0x05cf94: mov      r0, r4                      
+0x05cf96: add      r2, pc                      
+0x05cf98: bl       #0x44078                    
+0x05cf9c: mov      r0, r4                      
+0x05cf9e: strb.w   r5, [sp, #0x47]             
+0x05cfa2: bl       #0x2f754                    
+0x05cfa6: ldr      r0, [pc, #0x2c]                ; pool 0x0beba0
+0x05cfa8: add      r0, pc                      
+0x05cfaa: bl       #0x2fa74                    
+0x05cfae: add      sp, #0x4c                   
+0x05cfb0: pop      {r4, r5, pc}                
+0x05cfb2: ldr      r2, [pc, #0x24]                ; pool 0x0cd2f2
+0x05cfb4: mov      r3, r0                      
+0x05cfb6: movs     r1, #0x40                   
+0x05cfb8: mov      r0, r4                      
+0x05cfba: add      r2, pc                      
+0x05cfbc: bl       #0x44078                    
+0x05cfc0: mov      r0, r4                      
+0x05cfc2: movs     r3, #0                      
+0x05cfc4: strb.w   r3, [sp, #0x47]             
+0x05cfc8: bl       #0x2f7d4                    
+0x05cfcc: add      sp, #0x4c                   
+0x05cfce: pop      {r4, r5, pc}                
+0x05cfd0: blo      #0x5d038                    
+0x05cfd2: movs     r4, r1                      
+0x05cfd4: sub.w    r0, r0, fp                  
+0x05cfd8: bhs      #0x5cfc0                    
+0x05cfda: movs     r4, r1                      
+0x05cfdc: push     {r4, r5, r6, lr}            
+0x05cfde: sub      sp, #0x88                   
+0x05cfe0: add      r5, sp, #8                  
+0x05cfe2: mov      r6, r1                      
+0x05cfe4: mov      r4, r2                      
+0x05cfe6: movs     r1, #0                      
+0x05cfe8: mov      r0, r5                      
+0x05cfea: movs     r2, #0x80                   
+0x05cfec: blx      #0x44380                    
+0x05cff0: cmp      r4, #0                      
+0x05cff2: it       ne                          
+0x05cff4: cmpne    r6, #0                      
+0x05cff6: beq      #0x5d046                    
+0x05cff8: cmp.w    r4, #0x100                  
+0x05cffc: str      r6, [sp]                    
+0x05cffe: str      r4, [sp, #4]                

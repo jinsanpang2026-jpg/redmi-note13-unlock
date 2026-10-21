@@ -1,0 +1,13 @@
+# 从 OTA 固件拆出来的二进制产物（约 507MB），不随仓库分发。
+# 这些文件可按 README.md / UNLOCK-PROCEDURE.md 的步骤从固件重新拆包生成，
+# 校验值保留在 artifacts/parts/SHA256SUMS.txt。
+*.bin
+*.img
+*.jar
+
+# 旧版本残留（64MB 的过期 vendor_boot）
+*.stale
+
+.DS_Store
+__pycache__/
+*.pyc

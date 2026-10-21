@@ -1,0 +1,392 @@
+
+##### mtk.py.bak_rpmbfix -> mtk.py
+--- mtk.py.bak_rpmbfix	2026-10-21 00:26:42
++++ mtk.py	2026-10-21 00:28:43
+@@ -304,6 +304,14 @@
+ 
+     da_rpmb_a = da_rpmb_cmds.add_parser("a", help="Auth rpmbkey")
+     da_rpmb_a.add_argument('--rpmbkey', help='rpmb key (hexstring, 32 bytes)')
++
++    da_rpmbfix = da_subs.add_parser("rpmbfix", parents=[base],
++                                    help="Wipe Xiaomi MI-unlock magic from UFS RPMB")
++    da_rpmbfix.add_argument('--outdir', type=str, help="Directory for the dumped rpmb window")
++    da_rpmbfix.add_argument('--magic', type=str, default="Jz8PNRUF", help="Magic bytes to remove")
++    da_rpmbfix.add_argument('--winstart', type=str, default="0xF0", help="First rpmb sector to scan")
++    da_rpmbfix.add_argument('--winlen', type=str, default="0x20", help="Number of sectors to scan")
++    da_rpmbfix.add_argument('--reset', action='store_true', help="Reset to fastboot afterwards")
+ 
+     da_dump = da_subs.add_parser("memdump", parents=[base], help="Dump whole memory areas")
+     da_dump.add_argument('directory', type=str, help="Directory to dump ram dump files")
+
+##### mtkclient/Library/DA/mtk_da_handler.py.bak4 -> mtkclient/Library/DA/mtk_da_handler.py
+--- mtkclient/Library/DA/mtk_da_handler.py.bak4	2026-10-21 00:26:42
++++ mtkclient/Library/DA/mtk_da_handler.py	2026-10-21 00:36:14
+@@ -19,6 +19,14 @@
+     from mfusepy import FUSE
+ except ImportError:
+     FUSE = None
++
++
++def _hexval(v):
++    """Accept 0x.. / decimal strings or plain ints."""
++    if isinstance(v, int):
++        return v
++    v = str(v).strip()
++    return int(v, 0)
+ 
+ 
+ class efuse_runtime_def:
+@@ -538,7 +546,78 @@
+                 else:
+                     self.error("Error on patching vbmeta_b :(")
+         return True
++
++    def da_rpmbfix(self, outdir: str = "/tmp/mtkwork", display: bool = True,
++                   magic: str = "Jz8PNRUF", win_start: str = "0xF0",
++                   win_len: str = "0x20", reset: bool = False):
++        """Wipe the Xiaomi MI-unlock magic out of the UFS RPMB.
+ 
++        LK's fastboot lock state getter computes
++
++            final = (mi_get_lock_state() == 1) ? seccfg_lock_state : mi_get_lock_state()
++
++        and mi_get_lock_state() returns 1 exactly when mi_check_magic() does not
++        find the 8 byte magic at the RPMB base offset.  The seccfg partition
++        already carries lock_state=3, so dropping the magic makes the getter
++        fall back to seccfg and report unlocked=yes / secure=no.
++        """
++        dl = self.mtk.daloader
++        if dl.flashmode != DAmodes.XFLASH:
++            self.error("Device is not in xflash mode")
++            return False
++        if not dl.auth_rpmb():
++            self.error("auth_rpmb (rpmb key init) failed")
++            return False
++
++        rpath = os.path.join(outdir, "rpmb_win.bin")
++        if not dl.read_rpmb(filename=rpath, sector=win_start, sectors=win_len):
++            self.error("rpmb read failed")
++            return False
++        with open(rpath, "rb") as rf:
++            data = rf.read()
++        if display:
++            self.info(f"rpmb window: sectors {win_start}.., {len(data)} bytes -> {rpath}")
++
++        key = magic.encode()
++        idx = data.find(key)
++        if idx < 0:
++            self.error(f"magic {key!r} not found in the scanned window - nothing written")
++            return False
++        abs_off = _hexval(win_start) * 0x100 + idx
++        sector = abs_off // 0x100
++        inoff = abs_off % 0x100
++        if display:
++            self.info(f"magic {key!r} at rpmb offset 0x{abs_off:x} "
++                      f"(sector 0x{sector:x}, +0x{inoff:x})")
++
++        start = idx - inoff
++        chunk = bytearray(data[start:start + 0x100])
++        if len(chunk) != 0x100:
++            self.error("sector slice out of range")
++            return False
++        chunk[inoff:inoff + len(key)] = b"\x00" * len(key)
++        cpath = os.path.join(outdir, "rpmb_sector.bin")
++        with open(cpath, "wb") as wf:
++            wf.write(chunk)
++        if not dl.write_rpmb(filename=cpath, sector=hex(sector), sectors="1"):
++            self.error("rpmb write failed")
++            return False
++        self.info(f"wrote zeroed sector 0x{sector:x} to rpmb")
++
++        vpath = os.path.join(outdir, "rpmb_verify.bin")
++        if dl.read_rpmb(filename=vpath, sector=str(sector), sectors="1"):
++            with open(vpath, "rb") as rf:
++                v = rf.read()
++            if v.find(key) < 0:
++                self.info("read-back: magic is GONE -> LK will fall back to seccfg")
++            else:
++                self.info(f"read-back: magic still present at +0x{v.find(key):x}")
++        if reset:
++            bootmode = int(os.environ.get("MTC_BOOTMODE", "2"))
++            dl.shutdown(bootmode=bootmode)
++            self.info(f"reset sent (bootmode={bootmode})")
++        return True
++
+     def da_gpt(self, directory: str, display: bool = True):
+         if directory is None:
+             directory = ""
+@@ -1874,6 +1953,10 @@
+                     rpmbkey = args.rpmbkey
+                     mtk.daloader.auth_rpmb(rpmbkey)
+ 
++            elif subcmd == "rpmbfix":
++                self.da_rpmbfix(outdir=args.outdir or "/tmp/mtkwork",
++                                magic=args.magic, win_start=args.winstart,
++                                win_len=args.winlen, reset=args.reset)
+             elif subcmd == "meta":
+                 metamode = args.metamode
+                 if metamode is None:
+
+##### mtkclient/Library/DA/mtk_da_handler.py.bak2 -> mtkclient/Library/DA/mtk_da_handler.py
+--- mtkclient/Library/DA/mtk_da_handler.py.bak2	2026-10-20 23:47:56
++++ mtkclient/Library/DA/mtk_da_handler.py	2026-10-21 00:36:14
+@@ -21,6 +21,14 @@
+     FUSE = None
+ 
+ 
++def _hexval(v):
++    """Accept 0x.. / decimal strings or plain ints."""
++    if isinstance(v, int):
++        return v
++    v = str(v).strip()
++    return int(v, 0)
++
++
+ class efuse_runtime_def:
+     addr = None
+     mask = None
+@@ -538,7 +546,78 @@
+                 else:
+                     self.error("Error on patching vbmeta_b :(")
+         return True
++
++    def da_rpmbfix(self, outdir: str = "/tmp/mtkwork", display: bool = True,
++                   magic: str = "Jz8PNRUF", win_start: str = "0xF0",
++                   win_len: str = "0x20", reset: bool = False):
++        """Wipe the Xiaomi MI-unlock magic out of the UFS RPMB.
++
++        LK's fastboot lock state getter computes
++
++            final = (mi_get_lock_state() == 1) ? seccfg_lock_state : mi_get_lock_state()
++
++        and mi_get_lock_state() returns 1 exactly when mi_check_magic() does not
++        find the 8 byte magic at the RPMB base offset.  The seccfg partition
++        already carries lock_state=3, so dropping the magic makes the getter
++        fall back to seccfg and report unlocked=yes / secure=no.
++        """
++        dl = self.mtk.daloader
++        if dl.flashmode != DAmodes.XFLASH:
++            self.error("Device is not in xflash mode")
++            return False
++        if not dl.auth_rpmb():
++            self.error("auth_rpmb (rpmb key init) failed")
++            return False
+ 
++        rpath = os.path.join(outdir, "rpmb_win.bin")
++        if not dl.read_rpmb(filename=rpath, sector=win_start, sectors=win_len):
++            self.error("rpmb read failed")
++            return False
++        with open(rpath, "rb") as rf:
++            data = rf.read()
++        if display:
++            self.info(f"rpmb window: sectors {win_start}.., {len(data)} bytes -> {rpath}")
++
++        key = magic.encode()
++        idx = data.find(key)
++        if idx < 0:
++            self.error(f"magic {key!r} not found in the scanned window - nothing written")
++            return False
++        abs_off = _hexval(win_start) * 0x100 + idx
++        sector = abs_off // 0x100
++        inoff = abs_off % 0x100
++        if display:
++            self.info(f"magic {key!r} at rpmb offset 0x{abs_off:x} "
++                      f"(sector 0x{sector:x}, +0x{inoff:x})")
++
++        start = idx - inoff
++        chunk = bytearray(data[start:start + 0x100])
++        if len(chunk) != 0x100:
++            self.error("sector slice out of range")
++            return False
++        chunk[inoff:inoff + len(key)] = b"\x00" * len(key)
++        cpath = os.path.join(outdir, "rpmb_sector.bin")
++        with open(cpath, "wb") as wf:
++            wf.write(chunk)
++        if not dl.write_rpmb(filename=cpath, sector=hex(sector), sectors="1"):
++            self.error("rpmb write failed")
++            return False
++        self.info(f"wrote zeroed sector 0x{sector:x} to rpmb")
++
++        vpath = os.path.join(outdir, "rpmb_verify.bin")
++        if dl.read_rpmb(filename=vpath, sector=str(sector), sectors="1"):
++            with open(vpath, "rb") as rf:
++                v = rf.read()
++            if v.find(key) < 0:
++                self.info("read-back: magic is GONE -> LK will fall back to seccfg")
++            else:
++                self.info(f"read-back: magic still present at +0x{v.find(key):x}")
++        if reset:
++            bootmode = int(os.environ.get("MTC_BOOTMODE", "2"))
++            dl.shutdown(bootmode=bootmode)
++            self.info(f"reset sent (bootmode={bootmode})")
++        return True
++
+     def da_gpt(self, directory: str, display: bool = True):
+         if directory is None:
+             directory = ""
+@@ -1660,8 +1739,10 @@
+         elif cmd == "reset":
+             if os.path.exists(os.path.join(self.mtk.config.hwparam_path, ".state")):
+                 os.remove(os.path.join(self.mtk.config.hwparam_path, ".state"))
+-            mtk.daloader.shutdown(bootmode=0)
+-            print("Reset command was sent. Disconnect usb cable to power off.")
++            bootmode = int(os.environ.get("MTC_BOOTMODE", "2"))
++            mtk.daloader.shutdown(bootmode=bootmode)
++            print("Reset command was sent (bootmode=%d; 0=shutdown 1=home 2=fastboot)."
++                  % bootmode)
+         elif cmd == "da":
+             subcmd = args.subcmd
+             if subcmd is None:
+@@ -1872,6 +1953,10 @@
+                     rpmbkey = args.rpmbkey
+                     mtk.daloader.auth_rpmb(rpmbkey)
+ 
++            elif subcmd == "rpmbfix":
++                self.da_rpmbfix(outdir=args.outdir or "/tmp/mtkwork",
++                                magic=args.magic, win_start=args.winstart,
++                                win_len=args.winlen, reset=args.reset)
+             elif subcmd == "meta":
+                 metamode = args.metamode
+                 if metamode is None:
+
+##### mtkclient/Library/Connection/usblib.py.bak3 -> mtkclient/Library/Connection/usblib.py
+--- mtkclient/Library/Connection/usblib.py.bak3	2026-10-20 23:21:57
++++ mtkclient/Library/Connection/usblib.py	2026-10-20 23:21:57
+@@ -334,7 +334,7 @@
+         self.EP_OUT = None
+         self.EP_IN = None
+         def find_matching_device(devices):
+-            for dev in list(filter(lambda x: x.idVendor in [0x0E8D, 0x1004, 0x22d9, 0x0FCE], devices)):
++            for dev in list(filter(lambda x: x.idVendor in [0x0E8D, 0x1004, 0x22d9, 0x0FCE, 0x18D1], devices)):
+                 if dev.idVendor in self.portconfig and dev.idProduct in self.portconfig[dev.idVendor]:
+                     return dev
+             return None
+
+##### mtkclient/Library/Connection/usblib.py.bak -> mtkclient/Library/Connection/usblib.py
+--- mtkclient/Library/Connection/usblib.py.bak	2026-10-20 18:54:38
++++ mtkclient/Library/Connection/usblib.py	2026-10-20 23:21:57
+@@ -131,7 +131,11 @@
+         self._libusb_dll = None
+         self.queue = Queue()
+         self.rxleft = bytearray()
+-        if sys.platform.startswith('freebsd') or sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
++        if sys.platform.startswith('darwin'):
++            # macOS: the brew/system library is a .dylib; "libusb-1.0.so" never resolves
++            # and leaves self.backend unset, which breaks device configuration lookup.
++            self.backend = usb.backend.libusb1.get_backend(find_library=lambda x: "libusb-1.0.dylib")
++        elif sys.platform.startswith('freebsd') or sys.platform.startswith('linux'):
+             self.backend = usb.backend.libusb1.get_backend(find_library=lambda x: "libusb-1.0.so")
+         elif sys.platform.startswith('win32'):
+             # Prefer the bundled libusb DLL shipped with mtkclient (mtkclient/Windows)
+@@ -330,7 +334,7 @@
+         self.EP_OUT = None
+         self.EP_IN = None
+         def find_matching_device(devices):
+-            for dev in list(filter(lambda x: x.idVendor in [0x0E8D, 0x1004, 0x22d9, 0x0FCE], devices)):
++            for dev in list(filter(lambda x: x.idVendor in [0x0E8D, 0x1004, 0x22d9, 0x0FCE, 0x18D1], devices)):
+                 if dev.idVendor in self.portconfig and dev.idProduct in self.portconfig[dev.idVendor]:
+                     return dev
+             return None
+
+##### mtkclient/Library/Hardware/seccfg.py.bak2 -> mtkclient/Library/Hardware/seccfg.py
+--- mtkclient/Library/Hardware/seccfg.py.bak2	2026-10-20 20:33:41
++++ mtkclient/Library/Hardware/seccfg.py	2026-10-20 20:37:08
+@@ -60,6 +60,14 @@
+         if self.magic != 0x4D4D4D4D or self.endflag != 0x45454545:
+             self.error("Unknown V4 seccfg structure !")
+             return False
++        forced = os.environ.get("MTC_SECCFG_HWTYPE", "").strip().upper()
++        if forced:
++            self.hwtype = forced
++            self.info(f"hwtype found: {self.hwtype} (forced, hash check skipped)")
++            self.info(f"seccfg struct: ver={self.seccfg_ver} size={hex(self.seccfg_size)} "
++                      f"lock_state={self.lock_state} dm_verity={self.dm_verity_state} "
++                      f"sboot_runtime={self.sboot_runtime}")
++            return True
+         seccfg_data = pack("<IIIIIII", self.magic, self.seccfg_ver, self.seccfg_size, self.lock_state,
+                            self.dm_verity_state, self.sboot_runtime, 0x45454545)
+         _hash = hashlib.sha256(seccfg_data).digest()
+@@ -135,10 +143,11 @@
+         return True
+ 
+     def create(self, lockflag: str = "unlock", critical: bool = False):
+-        if lockflag == "lock" and self.lock_state == 1:
+-            return False, "Device is already locked"
+-        elif lockflag == "unlock" and self.lock_state == 3:
+-            return False, "Device is already unlocked"
++        if os.environ.get("MTC_SECCFG_FORCE_WRITE", "") != "1":
++            if lockflag == "lock" and self.lock_state == 1:
++                return False, "Device is already locked"
++            elif lockflag == "unlock" and self.lock_state == 3:
++                return False, "Device is already unlocked"
+         if lockflag == "unlock":
+             self.lock_state = 3
+             if critical:
+@@ -147,6 +156,17 @@
+             self.lock_state = 1
+             if critical:
+                 self.dm_verity_state = 0
++        for envname, attr in (("MTC_SECCFG_VER", "seccfg_ver"),
++                              ("MTC_SECCFG_SIZE", "seccfg_size"),
++                              ("MTC_SECCFG_LOCK_STATE", "lock_state"),
++                              ("MTC_SECCFG_DM_VERITY", "dm_verity_state"),
++                              ("MTC_SECCFG_SBOOT_RUNTIME", "sboot_runtime")):
++            val = os.environ.get(envname, "")
++            if val != "":
++                setattr(self, attr, int(val, 0))
++        self.info(f"seccfg struct to write: ver={self.seccfg_ver} size={hex(self.seccfg_size)} "
++                  f"lock_state={self.lock_state} dm_verity={self.dm_verity_state} "
++                  f"sboot_runtime={self.sboot_runtime} hwtype={self.hwtype}")
+         seccfg_data = pack("<IIIIIII", self.magic, self.seccfg_ver, self.seccfg_size, self.lock_state,
+                            self.dm_verity_state, self.sboot_runtime, 0x45454545)
+         dec_hash = hashlib.sha256(seccfg_data).digest()
+
+##### mtkclient/Library/Port.py.bak_hs -> mtkclient/Library/Port.py
+--- mtkclient/Library/Port.py.bak_hs	2026-10-20 23:33:17
++++ mtkclient/Library/Port.py	2026-10-20 23:33:20
+@@ -187,6 +187,18 @@
+                 ep_in(maxinsize, timeout=50)  # Discard any stale data
+             except:
+                 pass
++
++            # Batch fallback: some BROM builds only answer a single 4-byte write.
++            try:
++                if ep_out(startcmd, timeout=500) == len(startcmd):
++                    time.sleep(0.05)
++                    batch = ep_in(len(startcmd), timeout=500)
++                    if len(batch) == len(startcmd) and batch == expected_echo:
++                        self.info("Device detected :)")
++                        return True
++                    self.debug(f"Batch handshake mismatch: got {batch!r}")
++            except Exception as e:
++                self.debug(f"Batch handshake failed: {e}")
+ 
+         self.info("Handshake failed after retries")
+         return False
+
+##### mtkclient/config/usb_ids.py.bak3 -> mtkclient/config/usb_ids.py
+--- mtkclient/config/usb_ids.py.bak3	2026-10-20 23:21:57
++++ mtkclient/config/usb_ids.py	2026-10-20 23:21:57
+@@ -6,6 +6,7 @@
+              0x201D: -1,  # MTK Preloader
+              0x3000: -1},  # MTK Preloader
+     0x1004: {0x6000: 2},  # LG Preloader
++    0x18D1: {0x4EE7: -1},  # Xiaomi download mode (MTK preloader class)
+     0x22d9: {0x0006: -1},  # OPPO Preloader
+     0x0FCE: {0xF200, -1,  # Sony Brom
+              0xD1E9, -1,  # Sony Brom XA1
+
+##### mtkclient/config/usb_ids.py.bak -> mtkclient/config/usb_ids.py
+--- mtkclient/config/usb_ids.py.bak	2026-10-20 19:11:05
++++ mtkclient/config/usb_ids.py	2026-10-20 23:21:57
+@@ -4,9 +4,9 @@
+              0x2000: -1,  # MTK Preloader
+              0x2001: -1,  # MTK Preloader
+              0x201D: -1,  # MTK Preloader
+-             0x20FF: -1,  # MTK Preloader
+              0x3000: -1},  # MTK Preloader
+     0x1004: {0x6000: 2},  # LG Preloader
++    0x18D1: {0x4EE7: -1},  # Xiaomi download mode (MTK preloader class)
+     0x22d9: {0x0006: -1},  # OPPO Preloader
+     0x0FCE: {0xF200, -1,  # Sony Brom
+              0xD1E9, -1,  # Sony Brom XA1

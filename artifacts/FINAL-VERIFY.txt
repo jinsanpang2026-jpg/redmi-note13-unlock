@@ -1,0 +1,90 @@
+# 设备: 2312DRAABC / gold / MT6833 / Android 14 / HyperOS V816.0.12.0.UNQCNXM
+# 生成时间: 2026-10-21 04:30:45
+
+## 当前启动槽
+_a
+a
+orange
+unlocked
+
+## Magisk / root
+28.1:MAGISK:R
+uid=0(root) gid=0(root) groups=0(root) context=u:r:magisk:s0
+
+## bootconfig slot
+androidboot.vbmeta.device_state = "unlocked"
+androidboot.slot_suffix = "_a"
+androidboot.slot = "a"
+androidboot.verifiedbootstate = "orange"
+
+## dm mapper
+by-uuid
+com.android.adbd
+com.android.adservices
+com.android.appsearch
+com.android.art
+com.android.configinfrastructure
+com.android.conscrypt
+com.android.extservices
+com.android.ipsec
+com.android.media
+com.android.media.swcodec
+com.android.mediaprovider
+com.android.neuralnetworks
+com.android.ondevicepersonalization
+com.android.permission
+com.android.resolv
+com.android.scheduling
+com.android.tethering
+com.android.uwb
+com.android.wifi
+mi_ext-verity
+mi_ext_a
+mi_ext_a-cow
+pl_a
+pl_b
+product-verity
+product_a
+product_a-cow
+system-verity
+system_a
+system_a-cow
+system_ext-verity
+system_ext_a
+system_ext_a-cow
+userdata
+vendor-verity
+vendor_a
+vendor_a-cow
+
+## BCB (misc+0x800)
+magic     = 'BCAB' OK
+version   = 1
+nb_slot   = 2
+suffix    = '_a\x00\x00'
+slot A    = 0x9F  priority=15 tries=1 successful=1
+slot B    = 0x5E  priority=14 tries=5 successful=0
+# 备注: 这是 Android 起来之后 userspace bootctl 重写过的值。
+# fastboot --set-active=a 刚写完时是 A=0xFF / B=0x7F (both pri 15);
+# Android 启动成功后把 B 压到 pri 14、tries 5 —— B 优先级仍远高于 0,
+# 所以 A 槽一旦被标 unbootable, LK 仍会回落到 B 槽。
+
+## A/B 分区 sha256 一致性
+OK   boot  d5f6881890234aa56d381fe0fa29b93bf7440daf4b57138a2319e7184136c207
+OK   vendor_boot  bc3d00b87115a91a49f9fd17f1fe460e24bb7cbfc8ba483801301028da8c71b9
+OK   vbmeta  3061092920a41887eba3c5ec48eddf772b6e62d778fa98a14a335be236468c16
+OK   vbmeta_system  5187af4be759a3f82f572ac1076c3b0409f0501324f68cf5f2d35fc878ed1be3
+OK   vbmeta_vendor  49ca628852310c67814d1477363a5e048ddb316294910a5b17e9a89562d459d4
+OK   dtbo  beabcb0c1d5ce5d485b1b222dea59e5659a1bb6d40d17097f984407ccfc2d273
+OK   lk  cba59ee042abe1ef7e966aa132b45e98adddbf3e9b72a8a296b4a0e5be3d64bb
+OK   preloader  370df8e2316b1f06454e723027482b24b3768017eef645a266a3c95d5c55ce39
+OK   tee  355c49ea28ddfde5a12c912cfa6f3375ae20f2678706909c1bfc99392ea37ab0
+OK   mcupm  c481814c8cb53d452ecf19f603d6eebba2e00c30fee20fddec9c626d14029a26
+OK   scp  c7812d89750be4ac9c85683442fffffd942a63440024a42748b5c1c3a4cf767b
+OK   sspm  119d6c47ca4cd08d7d0500843dcfa0ac700bfefae04a67b827aabf8f2a6f6467
+OK   spmfw  34bb18d695cbdc1321e25c21fc2f27dfb879bc5820c7da80089e24c1eab16eca
+OK   gz  46b9c0c0d3d2bbd4d09811b3544536ad392a5c2be53308b7bdbffb7ce95f3b1f
+OK   logo  bb6b78aa8f6d2c412d9cea225b0e2557e13d9ae8809e8f35a83b03fcdbfc658e
+OK   dpm  e862d9df9699bd3afa52feb3cad6af17274f0f2a42e75e77f2335aedd1e50a3d
+OK   md1img  9ae7ea6ead3873a2bcb6a85754250590bb2173d01cce4823f4f6be9f8dd2ad11
+OK   pi_img  15ffd33acf76a608fa15b88b2c14c22d1da306e86f84c5df57b8236e7729159a
