@@ -221,7 +221,6 @@ LK 日志实证 `rpmb size : 0x1000000` (16MB) → `base_offset : 0xffe0`。
 **环境**
 - `/tmp` 会被 macOS 清理 → 关键产物已复制到本目录 `artifacts/`
 - `sudo` 需密码
-- 代理 `llmproxy:...@43.167.15.68:2345` 实测所有 GitHub HTTPS CONNECT 返 404，帮不上忙
 
 ## 8. 遗留问题与后续
 
@@ -816,7 +815,7 @@ https://dl.google.com/developers/android/<代号>/images/gsi/<文件名>.zip
 
 `<代号>` 是 Android 甜点码首字母：`qt`=A10 `rvc`=A11 `sc`=A12 `tm`=A13 `udc`=A14 `vic`=A15 `baklava`=A16 `cinnamonbun`=A17。
 
-本机代理实测（`curl -x <proxy> -r 0-3000`）**全部 206 / `application/zip`**：
+
 
 | Android | GSI(GMS) 文件 | 建议 |
 |---|---|---|
