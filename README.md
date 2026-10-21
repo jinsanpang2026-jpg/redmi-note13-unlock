@@ -1,4 +1,4 @@
-# Redmi Note 13 5G 国行 — 非官方 MTK 芯片级 Bootloader 解锁
+# Redmi Note 13 5G 国行 —  MTK 芯片级 Bootloader 解锁 + 面具 root  + AI 全程解锁无人工干预
 
 **状态：全部完成。** 2026-10-21 04:30 验收通过。全程AI自行解锁，无人工干预；
 
